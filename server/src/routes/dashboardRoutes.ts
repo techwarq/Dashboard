@@ -64,6 +64,16 @@ router.delete('/topics/:id', asyncHandler(async (req: Request, res: Response) =>
 }));
 
 // Get all questions for a specific topic
+// Create a new question
+router.post('/topics/:topicId/questions', asyncHandler(async (req: Request, res: Response) => {
+  const { title, isSolved, link, youtube } = req.body;
+  const topicId = parseInt(req.params.topicId);
+  const newQuestion = await prisma.question.create({
+    data: { title, isSolved, link, youtube, topicId },
+  });
+  res.status(201).json(newQuestion);
+}));
+
 router.get('/topics/:topicId/questions', asyncHandler(async (req: Request, res: Response) => {
   const questions = await prisma.question.findMany({
     where: { topicId: parseInt(req.params.topicId) },
@@ -71,6 +81,21 @@ router.get('/topics/:topicId/questions', asyncHandler(async (req: Request, res: 
   res.json(questions);
 }));
 
+// Update a question by ID
+router.put('/topics/:topicId/questions/:questionId', asyncHandler(async (req: Request, res: Response) => {
+  const { title, isSolved, link, youtube } = req.body;
+  try {
+    const updatedQuestion = await prisma.question.update({
+      where: { id: parseInt(req.params.questionId) },
+      data: { title, isSolved, link, youtube },
+    });
+    res.json(updatedQuestion);
+  } catch (error) {
+    res.status(404).json({ error: 'Question not found' });
+  }
+}));
+
+// Get a specific question by ID within a topic
 router.get('/topics/:topicId/questions/:questionId', asyncHandler(async (req: Request, res: Response) => {
   const topicId = parseInt(req.params.topicId);
   const questionId = parseInt(req.params.questionId);
@@ -94,54 +119,28 @@ router.get('/topics/:topicId/questions/:questionId', asyncHandler(async (req: Re
   }
 }));
 
-// Create a new question
-router.post('/topics/:topicId/questions', asyncHandler(async (req: Request, res: Response) => {
-  const { title, isSolved } = req.body;
+// Delete a question by ID within a topic
+router.delete('/topics/:topicId/questions/:questionId', asyncHandler(async (req: Request, res: Response) => {
   const topicId = parseInt(req.params.topicId);
-  const newQuestion = await prisma.question.create({
-    data: { title, isSolved, topicId },
-  });
-  res.status(201).json(newQuestion);
-}));
+  const questionId = parseInt(req.params.questionId);
 
-// Update a question by ID
-router.put('/topics/:topicId/questions/:questionid', asyncHandler(async (req: Request, res: Response) => {
-  const { title, isSolved } = req.body;
   try {
-    const updatedQuestion = await prisma.question.update({
-      where: { id: parseInt(req.params.questionid) },
-      data: { title, isSolved },
-    });
-    res.json(updatedQuestion);
-  } catch (error) {
-    res.status(404).json({ error: 'Question not found' });
-  }
-}));
-
-// Delete a question by ID
-
-router.delete('/topics/:topicId/questions/:questionid', asyncHandler(async (req: Request, res: Response) => {
-  try {
-    const questionId = parseInt(req.params.questionid);
-    const topicId = parseInt(req.params.topicId);
-
-    const deletedQuestion = await prisma.question.delete({
+    // Delete the question from the database
+    await prisma.question.delete({
       where: { 
         id: questionId,
-        topicId: topicId // Ensure the question belongs to the specified topic
+        topicId: topicId
       },
     });
-
-    if (deletedQuestion) {
-      res.status(200).json({ message: 'Question deleted successfully' });
-    } else {
-      res.status(404).json({ error: 'Question not found' });
-    }
+    res.status(204).send(); // Successfully deleted
   } catch (error) {
+    // Handle errors such as question not found
+    
     console.error('Error deleting question:', error);
     res.status(500).json({ error: 'Failed to delete question' });
   }
 }));
+
 // Get dashboard metrics
 router.get('/metrics', asyncHandler(getDashboardMetrics));
 
