@@ -1,9 +1,9 @@
 "use client"
-
+import { Ellipsis } from 'lucide-react';
 import { Button } from "../../../components/ui/button"
 import Link from "next/link";
-import React from "react";
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
 
 type Topic = {
   id: number;
@@ -28,6 +28,8 @@ export default function Topics() {
     fetchTopics();
   }, []);
 
+  
+
   return (
     <div className="p-6 max-w-7xl mx-auto">
       <div className="mb-8">
@@ -42,12 +44,25 @@ export default function Topics() {
       
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
         {topics.map((topic) => (
-          <Link key={topic.id} href={`/dashboard/topics/${topic.id}/questions`}>
-            <div className="border border-gray-700 rounded-lg p-4 h-full flex flex-col justify-between hover:bg-gray-800 transition-colors">
-              <h2 className="font-semibold text-lg mb-2">{topic.name}</h2>
-              <p className="text-sm text-gray-400">{topic.description}</p>
-            </div>
-          </Link>
+          <div key={topic.id} className="relative border border-gray-700 rounded-lg p-4 h-full flex flex-col justify-between hover:bg-gray-800 transition-colors">
+            {/* Ellipsis dropdown button */}
+            <DropdownMenu>
+              <DropdownMenuTrigger className='absolute top-2 right-2'>
+                <Ellipsis />
+              </DropdownMenuTrigger>
+              <DropdownMenuContent>
+                <DropdownMenuItem className='cursor-pointer'>Delete</DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
+
+            {/* Topic content */}
+            <Link href={`/dashboard/topics/${topic.id}/questions`}>
+              <div className="flex-grow">
+                <h2 className="font-semibold text-lg mb-2">{topic.name}</h2>
+                <p className="text-sm text-gray-400">{topic.description}</p>
+              </div>
+            </Link>
+          </div>
         ))}
       </div>
     </div>
