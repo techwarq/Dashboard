@@ -33,7 +33,7 @@ export default function Dashboard() {
             <div className="grid gap-4 md:grid-cols-2 md:gap-8 lg:grid-cols-4 ">
 
                 
-                <Card className="bg-transparent text-white">
+                <Card className="bg-transparent text-white border-purple-900">
                     <CardHeader className="flex flex-row items-center justify-between pb-2">
                         <CardTitle className="flex items-center gap-6">
                             Total Purchases
@@ -47,7 +47,7 @@ export default function Dashboard() {
                     </CardContent>
                 </Card>
 
-                <Card className="bg-transparent text-white">
+                <Card className="bg-transparent  border-purple-900 text-white">
                     <CardHeader className="flex flex-row items-center justify-between pb-2">
                         <CardTitle className="flex items-center gap-6">
                             Total Buy
@@ -60,7 +60,7 @@ export default function Dashboard() {
                     </CardContent>
                 </Card>
 
-                <Card className="bg-transparent text-white">
+                <Card className="bg-transparent  border-purple-900 text-white">
                     <CardHeader className="flex flex-row items-center justify-between pb-2">
                         <CardTitle className="flex items-center gap-6">
                             Total Sales
@@ -73,7 +73,7 @@ export default function Dashboard() {
                     </CardContent>
                 </Card>
 
-                <Card className="bg-transparent text-white">
+                <Card className="bg-transparent  border-purple-900 text-white">
                     <CardHeader className="flex flex-row items-center justify-between pb-2">
                         <CardTitle className="flex items-center gap-6">
                             Total Sales
@@ -90,7 +90,7 @@ export default function Dashboard() {
             </div>
 
             <div className="grid gap-4 md:gp-8 lg:grid-cols-2 xl:grid-cols-3 mt-10">
-                <Card className="xl:col-span-2 bg-transparent text-white">
+                <Card className="xl:col-span-2  border-purple-900 bg-transparent text-white">
                     <CardHeader>
                         <CardTitle className="flex items-center gap-6">Transactions</CardTitle>
                         <CardDescription>Recent Transactions from your store</CardDescription>
@@ -113,7 +113,7 @@ export default function Dashboard() {
                     </CardContent>
                 </Card>
 
-                <Card className="bg-transparent text-white">
+                <Card className="bg-transparent  border-purple-900 text-white">
                     <CardHeader>
                         <CardTitle>Recent Orders</CardTitle>
                     </CardHeader>

@@ -36,7 +36,7 @@ export default function Topics() {
         <h1 className="text-3xl font-bold tracking-tight mb-2">Topics</h1>
         <p className="text-base mb-4">Create Your Topics and Conquer</p>
         <Link href="/dashboard/topics/create">
-          <Button className="bg-blue-600 text-white hover:bg-blue-700">
+          <Button variant="outline" className=" text-white ">
             Add Topic
           </Button>
         </Link>
