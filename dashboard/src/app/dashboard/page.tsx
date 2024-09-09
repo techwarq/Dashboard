@@ -1,168 +1,170 @@
 "use client";
 
-import { Avatar, AvatarFallback } from "../../components/ui/avatar";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { DollarSign, ShoppingBag } from "lucide-react";
+import { useState, useEffect } from "react";
+import { Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter } from "@/components/ui/card";
+import { PieChart, Pie, Cell, Label, Tooltip as ChartTooltip } from "recharts";
+import { fetchDashboardMetrics } from "../actions/backend"; // Adjust the import path as needed
+import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 
-import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
-
-
-const data = [
-    { name: 'Page A', uv: 4000, pv: 2400, amt: 2400 },
-    { name: 'Page B', uv: 3000, pv: 1398, amt: 2210 },
-    { name: 'Page C', uv: 2000, pv: 9800, amt: 2290 },
-    { name: 'Page D', uv: 2780, pv: 3908, amt: 2000 },
-    { name: 'Page E', uv: 1890, pv: 4800, amt: 2181 },
-    { name: 'Page F', uv: 2390, pv: 3800, amt: 2500 },
-    { name: 'Page G', uv: 3490, pv: 4300, amt: 2100 },
-];
+interface Metrics {
+  solvedQuestionsCount: number;
+  topicsCount: number;
+  completedTopicsCount: number;
+  questionsCount: number;
+  progressData: { category: string; value: number }[];
+}
 
 export default function Dashboard() {
+  const [metrics, setMetrics] = useState<Metrics | null>(null);
+  const [loading, setLoading] = useState(true);
 
-    
+  useEffect(() => {
+    async function fetchMetrics() {
+      try {
+        const data = await fetchDashboardMetrics(); // Use the helper function to fetch metrics
+        setMetrics(data);
+        setLoading(false);
+      } catch (error) {
+        console.error("Error fetching dashboard metrics:", error);
+      }
+    }
 
-// Function to manually reset the chat
+    fetchMetrics();
+  }, []);
 
+  if (loading) {
+    return <div>Loading...</div>;
+  }
 
+  // Transform data for PieChart (example transformation, adjust as necessary)
+  const pieChartData = metrics?.progressData.map(item => ({
+    name: item.category,
+    value: item.value,
+  })) || [];
 
+  // Example total value for display in the center
+  const totalValue = pieChartData.reduce((acc, cur) => acc + cur.value, 0);
 
+  return (
+    <>
+      {/* Display metrics on cards */}
+      <div className="grid gap-6 md:grid-cols-2 md:gap-8 lg:grid-cols-4">
+        <Card className="bg-transparent text-white border-purple-900">
+          <CardHeader className="flex flex-row items-center justify-between pb-2">
+            <CardTitle>Total Solved Questions</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold">{metrics?.solvedQuestionsCount}/{metrics?.questionsCount}</div>
+            <div className="text-xs text-muted-foreground">Based on recent changes</div>
+          </CardContent>
+        </Card>
 
-   
-    return (
-        <>
-            <div className="grid gap-4 md:grid-cols-2 md:gap-8 lg:grid-cols-4 ">
+        <Card className="bg-transparent text-white border-purple-900">
+          <CardHeader className="flex flex-row items-center justify-between pb-2">
+            <CardTitle>Total Topics</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold">{metrics?.topicsCount}</div>
+            <div className="text-xs text-muted-foreground">Based on recent changes</div>
+          </CardContent>
+        </Card>
 
-                
-                <Card className="bg-transparent text-white border-purple-900">
-                    <CardHeader className="flex flex-row items-center justify-between pb-2">
-                        <CardTitle className="flex items-center gap-6">
-                            Total Purchases
-                            
-                            <DollarSign className="h-4 w-4 text-green-600" />
-                        </CardTitle>
-                    </CardHeader>
-                    <CardContent>
-                        <div className="text-2xl font-bold">Rs 100,000</div>
-                        <div className="text-xs text-muted-foreground">Based on 100 charges</div>
-                    </CardContent>
-                </Card>
+        <Card className="bg-transparent text-white border-purple-900">
+          <CardHeader className="flex flex-row items-center justify-between pb-2">
+            <CardTitle>Completed Topics</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold">{metrics?.completedTopicsCount}</div>
+            <div className="text-xs text-muted-foreground">Topics fully completed</div>
+          </CardContent>
+        </Card>
+      </div>
 
-                <Card className="bg-transparent  border-purple-900 text-white">
-                    <CardHeader className="flex flex-row items-center justify-between pb-2">
-                        <CardTitle className="flex items-center gap-6">
-                            Total Buy
-                            <ShoppingBag className="h-4 w-4 text-green-600" />
-                        </CardTitle>
-                    </CardHeader>
-                    <CardContent>
-                        <div className="text-2xl font-bold">5000</div>
-                        <div className="text-xs text-muted-foreground">Total sales</div>
-                    </CardContent>
-                </Card>
-
-                <Card className="bg-transparent  border-purple-900 text-white">
-                    <CardHeader className="flex flex-row items-center justify-between pb-2">
-                        <CardTitle className="flex items-center gap-6">
-                            Total Sales
-                            <ShoppingBag className="h-4 w-4 text-green-600" />
-                        </CardTitle>
-                    </CardHeader>
-                    <CardContent>
-                        <div className="text-2xl font-bold">5000</div>
-                        <div className="text-xs text-muted-foreground">Total sales</div>
-                    </CardContent>
-                </Card>
-
-                <Card className="bg-transparent  border-purple-900 text-white">
-                    <CardHeader className="flex flex-row items-center justify-between pb-2">
-                        <CardTitle className="flex items-center gap-6">
-                            Total Sales
-                            <ShoppingBag className="h-4 w-4 text-green-600" />
-                        </CardTitle>
-                    </CardHeader>
-                    <CardContent>
-                        <div className="text-2xl font-bold">5000</div>
-                        <div className="text-xs text-muted-foreground">Total sales</div>
-                    </CardContent>
-                </Card>
-
-                {/* Repeat the other cards similarly... */}
-            </div>
-
-            <div className="grid gap-4 md:gp-8 lg:grid-cols-2 xl:grid-cols-3 mt-10">
-                <Card className="xl:col-span-2  border-purple-900 bg-transparent text-white">
-                    <CardHeader>
-                        <CardTitle className="flex items-center gap-6">Transactions</CardTitle>
-                        <CardDescription>Recent Transactions from your store</CardDescription>
-                    </CardHeader>
-                    <CardContent>
-                        <ResponsiveContainer width="100%" height={300}>
-                            <LineChart
-                                data={data}
-                                margin={{ top: 5, right: 30, left: 20, bottom: 5 }}
+      {/* Progress Chart */}
+      <div className="grid gap-4 md:gap-8 lg:grid-cols-2 xl:grid-cols-3 mt-10">
+        <Card className="xl:col-span-2 border-purple-900 bg-transparent text-white">
+          <CardHeader className="items-center pb-0">
+            <CardTitle>Progress Data</CardTitle>
+            <CardDescription>January - June 2024</CardDescription>
+          </CardHeader>
+          <CardContent className="flex-1 pb-0">
+            <div className="mx-auto aspect-square max-h-[250px]">
+              <PieChart width={250} height={250}>
+                <Pie
+                  data={pieChartData}
+                  dataKey="value"
+                  nameKey="name"
+                  innerRadius={60}
+                  strokeWidth={0}
+                >
+                  {pieChartData.map((entry, index) => (
+                    <Cell key={`cell-${index}`} fill={index % 2 === 0 ? "#17126b" : "#82ca9d"} />
+                  ))}
+                  <Label
+                    content={({ viewBox }) => {
+                      if (viewBox && "cx" in viewBox && "cy" in viewBox) {
+                        return (
+                          <text
+                            x={viewBox.cx}
+                            y={viewBox.cy}
+                            textAnchor="middle"
+                            dominantBaseline="middle"
+                          >
+                            <tspan
+                              x={viewBox.cx}
+                              y={viewBox.cy}
+                              className="fill-foreground text-3xl  font-bold"
                             >
-                                <CartesianGrid strokeDasharray="3 3" />
-                                <XAxis dataKey="name" />
-                                <YAxis />
-                                <Tooltip />
-                                <Legend />
-                                <Line type="monotone" dataKey="pv" stroke="#8884d8" activeDot={{ r: 8 }} />
-                                <Line type="monotone" dataKey="uv" stroke="#82ca9d" />
-                            </LineChart>
-                        </ResponsiveContainer>
-                    </CardContent>
-                </Card>
-
-                <Card className="bg-transparent  border-purple-900 text-white">
-                    <CardHeader>
-                        <CardTitle>Recent Orders</CardTitle>
-                    </CardHeader>
-                    <CardContent className="flex flex-col gap-8">
-    <div className="flex items-center gap-4">
-        <Avatar className="hidden sm:flex h-9 w-9">
-            <AvatarFallback>RS</AvatarFallback>
-        </Avatar>
-        <div className="grid gap-1">
-            <p className="text-sm font-medium">Sunil</p>
-            <p className="text-sm text-muted-foreground">ramesh@test.com</p>
-        </div>
-        <p className="ml-auto font-medium">+Rs 1,99,999</p>
-    </div>
-    <div className="flex items-center gap-4">
-        <Avatar className="hidden sm:flex h-9 w-9">
-            <AvatarFallback>SS</AvatarFallback>
-        </Avatar>
-        <div className="grid gap-1">
-            <p className="text-sm font-medium">Suresh</p>
-            <p className="text-sm text-muted-foreground">sanjay@test.com</p>
-        </div>
-        <p className="ml-auto font-medium">+Rs 1,99,999</p>
-    </div>
-    <div className="flex items-center gap-4">
-        <Avatar className="hidden sm:flex h-9 w-9">
-            <AvatarFallback>RS</AvatarFallback>
-        </Avatar>
-        <div className="grid gap-1">
-            <p className="text-sm font-medium">Ramesh </p>
-            <p className="text-sm text-muted-foreground">ramesh@test.com</p>
-        </div>
-        <p className="ml-auto font-medium">+Rs 1,99,999</p>
-    </div>
-    <div className="flex items-center gap-4">
-        <Avatar className="hidden sm:flex h-9 w-9">
-            <AvatarFallback>SS</AvatarFallback>
-        </Avatar>
-        <div className="grid gap-1">
-            <p className="text-sm font-medium">Sanjay </p>
-            <p className="text-sm text-muted-foreground">sanjay@test.com</p>
-        </div>
-        <p className="ml-auto font-medium">+Rs 1,99,999</p>
-    </div>
-</CardContent>
-
-                </Card>
-
+                              {totalValue.toLocaleString()}
+                            </tspan>
+                            <tspan
+                              x={viewBox.cx}
+                              y={(viewBox.cy || 0) + 24}
+                              className="fill-muted-foreground"
+                            >
+                              Total
+                            </tspan>
+                          </text>
+                        );
+                      }
+                    }}
+                  />
+                </Pie>
+                <ChartTooltip />
+              </PieChart>
             </div>
-        </>
-    );
+          </CardContent>
+          <CardFooter className="flex-col gap-2 text-sm">
+            <div className="flex items-center gap-2 font-medium leading-none">
+              Trending up by 5.2% this month
+              {/* Add a suitable icon if needed */}
+            </div>
+            <div className="leading-none text-muted-foreground">
+              Showing progress data for the last 6 months
+            </div>
+          </CardFooter>
+        </Card>
+
+        {/* Recent Orders Card */}
+        <Card className="bg-transparent border-purple-900 text-white">
+          <CardHeader>
+            <CardTitle>Recent Orders</CardTitle>
+          </CardHeader>
+          <CardContent className="flex flex-col gap-8">
+            <div className="flex items-center gap-4">
+              <Avatar className="hidden sm:flex h-9 w-9">
+                <AvatarFallback>RS</AvatarFallback>
+              </Avatar>
+              <div className="grid gap-1">
+                <p className="text-sm font-medium">Sunil</p>
+                <p className="text-sm text-muted-foreground">ramesh@test.com</p>
+              </div>
+              <p className="ml-auto font-medium">+Rs 1,99,999</p>
+            </div>
+            {/* Add additional recent order entries as needed */}
+          </CardContent>
+        </Card>
+      </div>
+    </>
+  );
 }

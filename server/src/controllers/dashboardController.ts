@@ -47,6 +47,8 @@ export const getDashboardMetrics = async (
     // Count of topics covered
     const topicsCount = await prisma.topic.count();
 
+    const questionsCount = await prisma.question.count();
+
     // Todo List example (assuming you have a 'todos' table)
     // This is a placeholder example. Replace with your actual todo list logic if needed.
     
@@ -64,7 +66,8 @@ export const getDashboardMetrics = async (
       topicsCount,
       solvedQuestions,
       progressData,
-      completedTopicsCount
+      completedTopicsCount,
+      questionsCount
     });
   } catch (error) {
     res.status(500).json({ message: "Error retrieving dashboard metrics" });

@@ -103,6 +103,22 @@ export const deleteQuestion = async (questionId: number, topicId: number) => {
     throw error;
   }
 };
+export const fetchDashboardMetrics = async () => {
+  try {
+    const response = await fetch(`http://localhost:3002/api/metrics`, {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
+
+    const result = await response.json();
+    return result;// Return the metrics data from the backend
+  } catch (error) {
+    console.error("Error fetching dashboard metrics:", error);
+    throw error;
+  }
+};
 
 
 
